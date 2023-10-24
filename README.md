@@ -1,4 +1,4 @@
-"DatabaseConfig" structure, the "PostgreSQLDatabaseService" structure and constructor, the use of Viper for configuration data, and the purpose of the main function. 
+The "PostgreSQLDatabaseService" structure and constructor, the use of Viper for configuration data, and the purpose of the main function. 
 
 
 # Interface-method-and-constructor
