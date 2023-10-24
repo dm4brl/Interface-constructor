@@ -33,5 +33,16 @@ Database (database name).
 
 PostgreSQLDatabaseService structure and constructor:
 
+PostgreSQLDatabaseService is an implementation of the DatabaseService interface for working with PostgreSQL. It contains a config field of type DatabaseConfig to store the connection configuration.
+
+NewPostgreSQLDatabaseService(config DatabaseConfig) *PostgreSQLDatabaseService is a constructor that creates a new instance of PostgreSQLDatabaseService. The constructor takes the configuration as a parameter and returns a pointer to the new instance.
+
+Using Viper to read configuration data:
+
+The example uses the Viper library to read connection parameters from the configuration file (config.yaml). This provides secure storage of credentials and other configuration parameters.
+Main function (main):
+
+The main function of the code creates an instance of the database service, establishes a connection to the database, performs data insertion and retrieval operations, and displays the results.
+
 
 
