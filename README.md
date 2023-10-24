@@ -1,7 +1,7 @@
 The "PostgreSQLDatabaseService" structure and constructor, the use of Viper for configuration data, and the purpose of the main function. 
 
 
-# Interface-method-and-constructor
+# Interface-constructor
 Interface method and constructor architecture with interface configuration option to work with PostgreSQL. This approach allows you to create configurable database service instances
 
 
