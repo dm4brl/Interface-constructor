@@ -20,13 +20,9 @@ GetData(conn *pgx.Conn) (string, error): Retrieves data from the database using 
 DatabaseConfig structure: Stores the parameters for connecting to a PostgreSQL database. This structure contains the following fields:
 
 Host (database host).
-
 Port (database port).
-
 User (database user name).
-
 Password (database user password).
-
 Database (database name).
 
 PostgreSQLDatabaseService structure and constructor:
@@ -38,7 +34,6 @@ NewPostgreSQLDatabaseService(config DatabaseConfig) *PostgreSQLDatabaseService i
 Using Viper to read configuration data:
 
 The example uses the Viper library to read connection parameters from the configuration file (config.yaml). This provides secure storage of credentials and other configuration parameters.
-Main function (main):
 
 The main function of the code creates an instance of the database service, establishes a connection to the database, performs data insertion and retrieval operations, and displays the results.
 
