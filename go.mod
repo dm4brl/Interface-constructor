@@ -1,4 +1,4 @@
-module myapp
+module Interface-constructor
 
 go 1.17
 
