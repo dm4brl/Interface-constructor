@@ -1,6 +1,4 @@
-It seems like you've provided a description of the "DatabaseConfig" structure, the "PostgreSQLDatabaseService" structure and constructor, the use of Viper for configuration data, and the purpose of the main function in your code. 
-
-If you have any specific questions or if there's anything specific you would like to know or discuss regarding this code, please feel free to ask, and I'll be happy to assist you further.
+"DatabaseConfig" structure, the "PostgreSQLDatabaseService" structure and constructor, the use of Viper for configuration data, and the purpose of the main function. 
 
 
 # Interface-method-and-constructor
