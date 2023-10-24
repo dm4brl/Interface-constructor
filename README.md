@@ -20,9 +20,13 @@ GetData(conn *pgx.Conn) (string, error): Retrieves data from the database using 
 DatabaseConfig structure: Stores the parameters for connecting to a PostgreSQL database. This structure contains the following fields:
 
 Host (database host).
+
 Port (database port).
+
 User (database user name).
+
 Password (database user password).
+
 Database (database name).
 
 PostgreSQLDatabaseService structure and constructor:
