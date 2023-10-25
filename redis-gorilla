@@ -1,0 +1,110 @@
+package main
+
+import (
+	"database/sql"
+	"encoding/json"
+	"log"
+	"net/http"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
+	"golang.org/x/net/context"
+)
+
+var (
+	redisClient *redis.Client
+	db          *sql.DB
+)
+
+// PostgreSQLDatabaseService represents a service to interact with PostgreSQL database.
+type PostgreSQLDatabaseService struct {
+	DB *sql.DB
+}
+
+// NewPostgreSQLDatabaseService creates a new PostgreSQLDatabaseService instance.
+func NewPostgreSQLDatabaseService(db *sql.DB) *PostgreSQLDatabaseService {
+	return &PostgreSQLDatabaseService{DB: db}
+}
+
+// GetCourier retrieves a courier's information from the PostgreSQL database.
+func (s *PostgreSQLDatabaseService) GetCourier(courierID int) (Courier, error) {
+	// Implement your database query logic here to retrieve courier data.
+	// Example:
+	var courier Courier
+	err := s.DB.QueryRow("SELECT id, name, contact FROM couriers WHERE id = $1", courierID).Scan(&courier.ID, &courier.Name, &courier.Contact)
+	if err != nil {
+		return Courier{}, err
+	}
+	return courier, nil
+}
+
+// ...
+
+func main() {
+	// Load configuration using Viper
+	viper.SetConfigName("config")  // Load a configuration file named config.yaml or config.json, etc.
+	viper.AddConfigPath("config/") // Path to the directory where your config file is located
+	viper.ReadInConfig()
+
+	// Initialize the Redis client
+	redisClient = redis.NewClient(&redis.Options{
+		Addr: viper.GetString("redis.address"),
+	})
+
+	// Initialize the PostgreSQL database connection
+	db, err := sql.Open("postgres", viper.GetString("database.connection_string"))
+	if err != nil {
+		log.Fatalf("Failed to connect to PostgreSQL database: %v", err)
+	}
+	defer db.Close()
+
+	// Create a PostgreSQLDatabaseService instance
+	databaseService := NewPostgreSQLDatabaseService(db)
+
+	r := mux.NewRouter()
+
+	// Define a route for updating courier information
+	r.HandleFunc("/update_courier_info", UpdateCourierInfo(databaseService)).Methods("POST")
+
+	http.Handle("/", r)
+
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+// UpdateCourierInfo is the handler for updating courier information.
+func UpdateCourierInfo(dbService *PostgreSQLDatabaseService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var updatedCourier Courier
+		err := json.NewDecoder(r.Body).Decode(&updatedCourier)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		// Store the updated courier information in Redis
+		key := "courier:" + string(updatedCourier.ID)
+		data, err := json.Marshal(updatedCourier)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		ctx := context.Background()
+		err = redisClient.Set(ctx, key, string(data), 0).Err()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Return a response, e.g., confirming the update
+		response := map[string]interface{}{
+			"message":      "Courier information updated successfully",
+			"updated_data": updatedCourier,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}
+}
